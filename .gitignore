@@ -1,0 +1,33 @@
+# Logs
+logs
+*.log
+
+# Coverage directory used by tools like istanbul
+coverage
+
+# Dependency directories
+node_modules/
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Build output
+reply-plugin.ts
+*.js
+*.d.ts
+
+# Local environment variables, loaded with dotenv
+.env
+
+# Generated results from the script
+results.json
+
+# Its a library, don't use lockfiles
+package-lock.json
+yarn.lock
