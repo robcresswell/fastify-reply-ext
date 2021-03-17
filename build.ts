@@ -20,16 +20,26 @@ async function build() {
     const statusCode = parseInt(code, 10);
     const funcName = msgToFuncName(httpErrMsg);
 
-    typeDefs.push(`    ${funcName}: (customErrMsg?: string) => void;`);
-    decorators.push(`    fastify.decorateReply(
-      '${funcName}',
-      async function (this: FastifyReply, customMessage?: string) {
-        return this.code(${statusCode}).send({
-          statusCode: ${statusCode},
-          message: customMessage ?? "${httpErrMsg}",
-        });
-      },
-    );`);
+    if (statusCode === 204) {
+      typeDefs.push(`    ${funcName}: () => void;`);
+      decorators.push(`    fastify.decorateReply(
+        '${funcName}',
+        async function (this: FastifyReply) {
+          return this.code(${statusCode}).send();
+        },
+        );`);
+    } else {
+      typeDefs.push(`    ${funcName}: (customErrMsg?: string) => void;`);
+      decorators.push(`    fastify.decorateReply(
+        '${funcName}',
+        async function (this: FastifyReply, customMessage?: string) {
+          return this.code(${statusCode}).send({
+            statusCode: ${statusCode},
+            message: customMessage ?? "${httpErrMsg}",
+          });
+        },
+        );`);
+    }
   });
 
   const template = `import type { FastifyReply } from 'fastify';
