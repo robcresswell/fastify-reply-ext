@@ -21,24 +21,30 @@ async function build() {
     const funcName = msgToFuncName(httpErrMsg);
 
     if (statusCode === 204) {
-      typeDefs.push(`    ${funcName}: () => void;`);
+      typeDefs.push(`    /**
+    * Send a HTTP ${statusCode} "${httpErrMsg}" response
+    */
+    ${funcName}: () => void;`);
       decorators.push(`    fastify.decorateReply(
-        '${funcName}',
-        async function (this: FastifyReply) {
-          return this.code(${statusCode}).send();
-        },
-        );`);
+      '${funcName}',
+      async function (this: FastifyReply) {
+        return this.code(${statusCode}).send();
+      },
+    );`);
     } else {
-      typeDefs.push(`    ${funcName}: (customErrMsg?: string) => void;`);
+      typeDefs.push(`    /**
+    * Send a HTTP ${statusCode} "${httpErrMsg}" response
+    */
+    ${funcName}: (customErrMsg?: string) => void;`);
       decorators.push(`    fastify.decorateReply(
-        '${funcName}',
-        async function (this: FastifyReply, customMessage?: string) {
-          return this.code(${statusCode}).send({
-            statusCode: ${statusCode},
-            message: customMessage ?? "${httpErrMsg}",
-          });
-        },
-        );`);
+      '${funcName}',
+      async function (this: FastifyReply, customMessage?: string) {
+        return this.code(${statusCode}).send({
+          statusCode: ${statusCode},
+          message: customMessage ?? "${httpErrMsg}",
+        });
+      },
+    );`);
     }
   });
 
